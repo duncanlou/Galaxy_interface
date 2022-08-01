@@ -1,0 +1,5 @@
+matplotlib~=3.5.2
+pyqt5~=5.15.7
+pyqtgraph~=0.12.4
+astropy~=5.1
+pandas~=1.4.3
