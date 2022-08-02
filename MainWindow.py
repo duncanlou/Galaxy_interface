@@ -33,7 +33,6 @@ class MplCanvas(FigureCanvasQTAgg):
         print(type(self.fig.canvas))
         self.fig.canvas.draw()
 
-
     def plot_synthesis(self, file_path):
         with fits.open(file_path) as hdu:
             freq = hdu[1].data['freq']
@@ -51,10 +50,17 @@ class MainWindow(QMainWindow):
         uic.loadUi("mainwindow.ui", self)
         self.setWindowTitle("Galaxy Inspector")
         self.moveWindowToScreenCenter()
+
         self.dbQuery = QSqlQuery(QSqlDatabase.database())
+        self.dbQuery.setForwardOnly(True)
         self.current_galaxy = self.next_db_entry()
+        self.set_galaxy_name(self.current_galaxy["galaxy_name"])
         self.init_widgets()
         self.plot_images(self.current_galaxy)
+
+    def set_galaxy_name(self, galaxy_name):
+        self.label_galaxy_name = self.findChild(QLabel, "label_galaxy_name")
+        self.label_galaxy_name.setText(f"Galaxy name: {galaxy_name}")
 
     def moveWindowToScreenCenter(self):
         qtRectangle = self.frameGeometry()
@@ -77,14 +83,13 @@ class MainWindow(QMainWindow):
             self.save_results()
             self.del_current_galaxy_from_database()
             self.current_galaxy = self.next_db_entry()
+            self.set_galaxy_name(self.current_galaxy["galaxy_name"])
             self.setBeamGroupBoxVisibility()
+
             self.plot_images(self.current_galaxy)
 
         else:
             print("No!")
-
-        # # 设置下一个Galaxy页面的radio button的初始状态
-        # self.setRadioButtons()
 
     def save_results(self):
         beam1, beam2, beam3, beam4, synthesis = self.getUserResults()
@@ -225,13 +230,15 @@ class MainWindow(QMainWindow):
                     "synthesis": synthesis,
                     "sdss": sdss
                 }
+                print("Current Galaxy: ")
+                print("-" * 10)
+                return self.current_galaxy
+            else:
+                print(self.dbQuery.lastError().text())
+                sys.exit(-1)
         else:
             print(__file__, "db error", self.dbQuery.lastError().text())
             sys.exit(-1)
-        print("Current Galaxy: ")
-        print("-" * 10)
-        print(self.current_galaxy)
-        return self.current_galaxy
 
     def plot_images(self, data=None):
         if data is None:

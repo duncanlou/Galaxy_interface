@@ -31,6 +31,8 @@ def readData():
     beam_dict = defaultdict(list)
     beam_files = os.listdir(IMAGE_PATH_BEAMS)
     for beam in beam_files:
+        if beam == '.DS_Store':  # ignore the auto generated file on Mac
+            continue
         galaxy_name = beam.split("_")[0]
         beam_path = os.path.join(IMAGE_PATH_BEAMS, beam)
         beam_dict[galaxy_name].append(beam_path)
@@ -38,6 +40,8 @@ def readData():
     synthesis_dict = {}
     synthesis_files = os.listdir(IMAGE_PATH_SYNTHESIS)
     for file_name in synthesis_files:
+        if file_name == '.DS_Store':  # ignore the auto generated file on Mac
+            continue
         galaxy_name = file_name.removesuffix(".fits")
         file_path = os.path.join(IMAGE_PATH_SYNTHESIS, file_name)
         synthesis_dict[galaxy_name] = file_path
