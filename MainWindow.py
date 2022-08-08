@@ -3,7 +3,6 @@ import ast
 
 from PyQt5 import uic
 from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QCloseEvent
 from PyQt5.QtSql import QSqlQuery, QSqlDatabase
 from PyQt5.QtWidgets import *
 from astropy.io import fits
